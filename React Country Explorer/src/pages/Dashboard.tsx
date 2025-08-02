@@ -24,12 +24,10 @@ export default function Dashboard() {
         const res = await fetch(
           "https://restcountries.com/v3.1/all?fields=name,region,flags,population"
         );
-
         const data = await res.json();
         if (Array.isArray(data)) {
           setCountries(data);
         } else {
-          console.error("Data negara bukan array:", data);
           setCountries([]);
         }
       } catch (error) {
@@ -48,30 +46,42 @@ export default function Dashboard() {
     : [];
 
   return (
-    <div className="min-h-screen w-full bg-gray-100 p-4">
-      <h1 className="text-3xl font-bold text-center mb-4 text-black">
-        Country Explorer
-      </h1>
-      <div className="max-w-md mx-auto mb-6">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center px-4 py-6 overflow-x-hidden">
+      <div className="w-full max-w-5xl mb-6 text-center">
+        <h1 className="text-3xl font-bold text-black">🌍 Country Explorer</h1>
         <input
           type="text"
-          placeholder="Cari negara..."
-          className="w-full px-4 py-2 rounded border border-gray-300 shadow-sm focus:outline-none focus:ring focus:ring-blue-200 text-black"
-          value={search}
+          placeholder="Search for a country..."
+          className="w-full max-w-md mt-4 p-2 text-black rounded-md shadow focus:outline-none focus:ring-2 focus:ring-white"
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {filteredCountries.map((country) => (
-          <Country
+          <div
             key={country.name.common}
-            name={country.name.common}
-            region={country.region}
-            population={country.population}
-            flags={country.flags.svg}
-            onClick={() => navigate(`/country/${country.name.common}`)}
-          />
+            className="bg-white shadow-md rounded-lg overflow-hidden text-center p-4 hover:shadow-lg transition"
+          >
+            <img
+              src={country.flags.svg}
+              alt={country.name.common}
+              className="w-full h-32 object-cover rounded"
+            />
+            <div className="mt-3 font-semibold text-black text-lg">
+              {country.name.common}
+            </div>
+            <div className="text-gray-600 text-sm">{country.region}</div>
+            <div className="text-gray-500 text-xs">
+              Population: {country.population.toLocaleString()}
+            </div>
+            <button
+              className="mt-3 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition text-sm"
+              onClick={() => navigate(`/details/${country.name.common}`)}
+            >
+              View Details
+            </button>
+          </div>
         ))}
       </div>
     </div>
